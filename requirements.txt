@@ -1,0 +1,32 @@
+# Credit Card Agent Requirements
+
+# Core ADK dependencies
+google-adk[database]==0.3.0
+
+# LLM and AI dependencies
+google-generativeai==0.8.5
+litellm==1.66.3
+
+# Data processing
+pydantic==2.5.0
+pandas==2.1.4
+numpy==1.24.3
+
+# HTTP and API clients
+requests==2.31.0
+httpx==0.25.2
+
+# Environment and configuration
+python-dotenv==1.0.0
+
+# Logging and monitoring
+structlog==23.2.0
+
+# Testing (optional)
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# Development tools (optional)
+black==23.11.0
+flake8==6.1.0
+mypy==1.7.1

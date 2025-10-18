@@ -1,339 +1,167 @@
-# 13. Credit Card Agent - Multi-Agent System
+# Credit Card Agent - ZET API Integration
 
-A sophisticated multi-agent system for intelligent credit card recommendations and comparisons, built using Google's Agent Development Kit (ADK).
+A simplified credit card recommendation system that integrates with the ZET Partner API to provide personalized credit card advice, recommendations, and application support.
 
-## 🏗️ Architecture Overview
+## Features
 
-This system implements a Multi-Agent System (MAS) paradigm with specialized agents working together to provide personalized credit card recommendations:
+- **Credit Card Advice**: General guidance and information about credit cards
+- **Personalized Recommendations**: Get tailored credit card suggestions based on user profile
+- **Eligibility Checking**: Check if users qualify for specific credit cards
+- **Application Support**: Help users apply for credit cards through ZET platform
+- **Lead Management**: Track application status and provide updates
 
-### Core Agents
+## Customer Journey
 
-1. **OrchestratorAgent** - Central coordinator managing workflow and inter-agent communication
-2. **IntentAgent** - Classifies user queries into predefined intents (travel, cashback, premium, etc.)
-3. **DataIngestionAgent** - Manages credit card data from multiple sources
-4. **EligibilityCheckAgent** - Applies deterministic rules to filter eligible cards
-5. **RecommendationAgent** - Ranks and selects best-fit cards based on user profile
-6. **ComparisonAnalysisAgent** - Performs detailed LLM-powered card comparisons
-7. **ExplainerAgent** - Generates human-readable rationale for recommendations
-8. **ResponseGenerationAgent** - Synthesizes analysis into user-friendly reports with compliance guardrails
+1. **Initial Consultation**: User asks for advice or recommendations
+2. **Profile Creation**: Collect user information (income, age, spending patterns, etc.)
+3. **Recommendation Generation**: Get personalized recommendations from ZET API
+4. **Eligibility Verification**: Check eligibility for recommended cards
+5. **Application Process**: Guide users through the application process
+6. **Status Tracking**: Monitor application progress and provide updates
 
-## 🚀 Features
+## Architecture
 
-### Intelligent Recommendations
-- **Personalized Analysis**: Considers user's spending patterns, income, credit score, and preferences
-- **Multi-Factor Scoring**: Combines rewards value, fee efficiency, intent alignment, and profile fit
-- **Real-time Eligibility**: Applies comprehensive eligibility rules based on issuer criteria
+The system uses a simplified multi-agent architecture with three main agents:
 
-### Advanced Comparison
-- **Quantitative Analysis**: Calculates annual rewards value, net costs, and ROI
-- **Qualitative Assessment**: Evaluates benefits relevance using LLM analysis
-- **Side-by-side Comparison**: Detailed feature-by-feature comparison tables
+### Main Agent (`credit_card_agent`)
+- Orchestrates the entire credit card journey
+- Routes requests to appropriate sub-agents
+- Provides comprehensive credit card assistance
 
-### Compliance & Safety
-- **Multi-layer Guardrails**: Input filtering, prompt constraints, and output moderation
-- **Topic Restrictions**: Strictly limited to credit cards, no other financial products
-- **Zero-shot Refusal**: Safe fallback for prohibited content
+### Sub-Agents
 
-### Data Management
-- **Multi-source Ingestion**: ZetApp API, bank APIs, and internal databases
-- **Unified Ontology**: Standardized credit card data schema
-- **Real-time Updates**: Cached data with TTL-based refresh
+#### 1. Advisor Agent (`advisor_agent`)
+- Provides general credit card advice and guidance
+- Explains different types of credit cards and their benefits
+- Answers questions about credit card usage and best practices
 
-## 📊 Data Model
+#### 2. Recommendation Agent (`recommendation_agent`)
+- Collects user profile information
+- Gets personalized recommendations from ZET API
+- Explains why specific cards are recommended
+- Checks eligibility for different cards
 
-The system uses a comprehensive credit card ontology with the following key sections:
+#### 3. Application Agent (`application_agent`)
+- Helps users apply for credit cards
+- Tracks application status and provides updates
+- Manages leads and follow-ups
+- Explains application requirements and process
 
-- **General Information**: Card name, issuer, network, tier
-- **Eligibility Rules**: Age, income, credit score, location requirements
-- **Fee Structure**: Joining fee, annual fee, waiver conditions, interest rates
-- **Rewards Program**: Earning rates, welcome bonuses, redemption options
-- **Benefits**: Travel, lifestyle, and insurance benefits
-- **Application Details**: Deep links to issuer application pages
+## ZET API Integration
 
-## 🛠️ Installation & Setup
+The system integrates with the ZET Partner API to provide real-time credit card data and recommendations:
 
-### Prerequisites
+- **Product Information**: Get available credit cards and detailed information
+- **Personalized Recommendations**: Get tailored suggestions based on user profile
+- **Eligibility Checking**: Check user eligibility for specific products
+- **Application Processing**: Submit applications and track leads
+- **Lead Management**: Monitor application status and updates
+
+## Setup
+
+1. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Environment Configuration**:
+   Create a `.env` file with the following variables:
+   ```
+   ZET_API_KEY=your_zet_api_key_here
+   ZET_PHONE_NUMBER=your_phone_number_here
+   GOOGLE_API_KEY=your_google_api_key_here
+   ```
+
+3. **Run the System**:
+   ```bash
+   python main.py
+   ```
+
+4. **Interactive Mode**:
+   ```bash
+   python main.py --interactive
+   ```
+
+## Usage Examples
+
+### General Advice
+```
+"I need advice on choosing a credit card"
+"What are the benefits of travel credit cards?"
+"How do I improve my credit score?"
+```
+
+### Personalized Recommendations
+```
+"Find me credit cards suitable for my profile"
+"I'm looking for cashback cards for online shopping"
+"Show me premium credit cards for travel"
+```
+
+### Eligibility Checking
+```
+"Am I eligible for HDFC credit cards?"
+"Check my eligibility for the SBI SimplyClick card"
+"What cards can I get with my income level?"
+```
+
+### Application Support
+```
+"Help me apply for a credit card"
+"I want to apply for the HDFC MoneyBack+ card"
+"What documents do I need for the application?"
+```
+
+### Status Tracking
+```
+"What's the status of my credit card application?"
+"Check my lead status"
+"Any updates on my application?"
+```
+
+## API Endpoints Used
+
+The system uses the following ZET Partner API endpoints:
+
+- `POST /generate-token` - Generate access token
+- `POST /refresh-token` - Refresh access token
+- `POST /customer-addition` - Add customer to platform
+- `GET /products` - Get available credit cards
+- `GET /products/{id}` - Get specific card details
+- `GET /recommendations/{user_id}` - Get personalized recommendations
+- `GET /recommendations/{product_id}/{user_id}` - Check product eligibility
+- `POST /apply/{user_id}` - Apply for credit card
+- `GET /customer/leads` - Get lead information
+- `GET /customer/leads/{lead_id}` - Get specific lead details
+
+## File Structure
+
+```
+credit_card_agent/
+├── agent.py                 # Main credit card agent
+├── models.py               # Data models
+├── tools.py                # ZET API tools
+├── zet_api.py              # ZET API client
+└── subagents/
+    ├── advisor_agent.py    # Advice and guidance
+    ├── recommendation_agent.py  # Personalized recommendations
+    └── application_agent.py     # Applications and leads
+```
+
+## Key Features
+
+- **Real-time Data**: Uses ZET API for up-to-date credit card information
+- **Personalized Recommendations**: Tailored suggestions based on user profile
+- **Complete Journey**: From advice to application to status tracking
+- **Simple Architecture**: Easy to understand and maintain
+- **No Dummy Data**: All data comes from real API calls
+
+## Requirements
+
 - Python 3.8+
-- Google ADK framework
-- Required dependencies (see requirements.txt)
+- ZET Partner API access
+- Google AI API key (for Gemini models)
 
-### Setup
-```bash
-# Navigate to the credit card agent directory
-cd 13-credit-card-agent
+## License
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your API keys
-```
-
-### Environment Variables
-```env
-GOOGLE_API_KEY=your_google_api_key_here
-ZETAPP_API_KEY=your_zetapp_api_key_here
-CREDIT_BUREAU_API_KEY=your_credit_bureau_api_key_here
-```
-
-## 🎯 Usage
-
-### Basic Usage
-```python
-from credit_card_agent.agent import CreditCardAgent
-from credit_card_agent.models import UserProfile, IntentType
-
-# Initialize agent
-agent = CreditCardAgent()
-
-# Process natural language query
-response = agent.process_query("Find travel credit cards with lounge access")
-
-# Get recommendations with user profile
-user_profile = UserProfile(
-    age=32,
-    employment="salaried",
-    net_monthly_income=80000,
-    credit_score=780,
-    city="Mumbai",
-    monthly_spending={
-        "groceries": 15000,
-        "dining": 8000,
-        "travel_flights_hotels": 5000,
-        "online_shopping_ecommerce": 20000
-    }
-)
-
-recommendations = agent.get_recommendations(user_profile, IntentType.FIND_TRAVEL_CARD)
-```
-
-### Command Line Interface
-```bash
-# Run demo
-python main.py
-
-# Interactive mode
-python main.py --interactive
-```
-
-### API Endpoints (if deployed)
-```bash
-# Get recommendations
-POST /api/recommendations
-{
-    "query": "Find cashback credit cards",
-    "user_profile": { ... }
-}
-
-# Compare cards
-POST /api/compare
-{
-    "card_a_id": "hdfc_moneyback_plus",
-    "card_b_id": "sbi_simplyclick",
-    "user_profile": { ... }
-}
-
-# Search cards
-GET /api/search?issuer=HDFC&tier=Premium
-```
-
-## 🔄 Workflow
-
-### 1. Query Processing
-```
-User Query → IntentAgent → OrchestratorAgent
-```
-
-### 2. Data Gathering
-```
-OrchestratorAgent → DataIngestionAgent → Card Database
-```
-
-### 3. Eligibility Filtering
-```
-OrchestratorAgent → EligibilityCheckAgent → Filtered Cards
-```
-
-### 4. Recommendation Generation
-```
-OrchestratorAgent → RecommendationAgent → Ranked Cards
-```
-
-### 5. Analysis & Explanation
-```
-RecommendationAgent → ExplainerAgent → Rationale
-```
-
-### 6. Response Generation
-```
-All Agents → ResponseGenerationAgent → Final Response
-```
-
-## 🧪 Testing
-
-### Unit Tests
-```bash
-python -m pytest tests/unit/
-```
-
-### Integration Tests
-```bash
-python -m pytest tests/integration/
-```
-
-### Agent Health Check
-```python
-agent = CreditCardAgent()
-health_status = agent.health_check()
-print(health_status)
-```
-
-## 📈 Monitoring & Observability
-
-### Metrics
-- Agent performance and latency
-- Recommendation accuracy
-- Compliance violation rates
-- Data freshness and quality
-
-### Logging
-- Structured JSON logs with trace IDs
-- Agent interaction tracing
-- Error tracking and alerting
-
-### Health Checks
-- Data source connectivity
-- Agent availability
-- LLM API status
-- Cache performance
-
-## 🔧 Configuration
-
-### Agent Configuration
-```python
-agent_config = {
-    "llm_model": "gemini-pro",
-    "temperature": 0.3,
-    "max_tokens": 2000,
-    "cache_ttl": 3600,
-    "max_recommendations": 5
-}
-```
-
-### Eligibility Rules
-```json
-{
-    "credit_score_thresholds": {
-        "excellent": 780,
-        "good": 750,
-        "fair": 700
-    },
-    "income_multipliers": {
-        "high": 2.0,
-        "good": 1.5,
-        "minimum": 1.0
-    }
-}
-```
-
-## 🚨 Error Handling
-
-### Graceful Degradation
-- Fallback to cached data when external APIs fail
-- Template-based responses when LLM is unavailable
-- Partial results when some agents fail
-
-### Retry Mechanisms
-- Exponential backoff for API calls
-- Circuit breaker pattern for external services
-- Automatic retry for transient failures
-
-### Error Recovery
-- Automatic fallback to alternative data sources
-- Graceful handling of malformed responses
-- User-friendly error messages
-
-## 🔒 Security & Compliance
-
-### Data Protection
-- No storage of sensitive user data
-- Secure API key management
-- Encrypted data transmission
-
-### Compliance Guardrails
-- Strict topic restrictions
-- Content filtering and sanitization
-- Audit logging for compliance
-
-### Rate Limiting
-- API rate limiting
-- User request throttling
-- Resource usage monitoring
-
-## 📚 API Documentation
-
-### Models
-- `UserProfile`: User demographic and financial information
-- `CreditCard`: Complete card data following the ontology
-- `CardRecommendation`: Ranked recommendation with rationale
-- `ComparisonResult`: Detailed comparison analysis
-- `AgentResponse`: Standardized response format
-
-### Tools
-- `CreditScoreCheckTool`: External credit score verification
-- `CardDataIngestionTool`: Multi-source data collection
-- `EligibilityRuleEngineTool`: Rule-based eligibility checking
-- `ComplianceGuardrailTool`: Content safety verification
-- `RewardsCalculatorTool`: Rewards value calculation
-
-## 🤝 Contributing
-
-### Development Setup
-```bash
-git clone <repository>
-cd 13-credit-card-agent
-pip install -e .
-```
-
-### Code Style
-- Follow PEP 8 guidelines
-- Use type hints
-- Write comprehensive docstrings
-- Include unit tests
-
-### Pull Request Process
-1. Fork the repository
-2. Create a feature branch
-3. Make changes with tests
-4. Submit pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🆘 Support
-
-For support and questions:
-- Check the documentation
-- Review existing issues
-- Create a new issue with detailed information
-
-## 🔮 Future Enhancements
-
-### Planned Features
-- Real-time credit score integration
-- Advanced ML-based recommendations
-- Mobile app integration
-- Voice interface support
-- Multi-language support
-
-### Scalability Improvements
-- Horizontal agent scaling
-- Distributed data processing
-- Advanced caching strategies
-- Performance optimization
-
----
-
-**Note**: This is a demonstration system. For production use, ensure proper security measures, data validation, and compliance with financial regulations.
+This project is part of the Agent Development Kit crash course.

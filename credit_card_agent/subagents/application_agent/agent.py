@@ -4,7 +4,12 @@ Application Agent - Handles credit card applications and lead management
 
 from google.adk.agents import Agent
 from google.adk.tools.agent_tool import AgentTool
-from ..tools import apply_for_card, get_lead_status, get_credit_card_details
+from ...tools import (
+    refresh_token,
+    apply_for_card, 
+    get_lead_status, 
+    get_credit_card_details
+)
 
 application_agent = Agent(
     name="application_agent",
@@ -28,6 +33,7 @@ application_agent = Agent(
     Provide clear information about what happens after application submission.
     """,
     tools=[
+        refresh_token,
         apply_for_card,
         get_lead_status,
         get_credit_card_details,

@@ -1,2 +1,1 @@
-# Credit Card Agent Package
-from .agent import CreditCardAgent
+from . import agent

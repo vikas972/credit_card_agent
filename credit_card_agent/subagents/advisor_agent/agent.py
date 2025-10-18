@@ -4,7 +4,11 @@ Advisor Agent - Provides credit card advice and guidance
 
 from google.adk.agents import Agent
 from google.adk.tools.agent_tool import AgentTool
-from ..tools import get_credit_cards, get_credit_card_details
+from ...tools import (
+    refresh_token,
+    get_credit_cards, 
+    get_credit_card_details
+)
 
 advisor_agent = Agent(
     name="advisor_agent",
@@ -25,6 +29,7 @@ advisor_agent = Agent(
     When users ask about specific credit cards, use the tools to get real-time data.
     """,
     tools=[
+        refresh_token,
         get_credit_cards,
         get_credit_card_details,
     ],

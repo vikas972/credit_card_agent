@@ -14,18 +14,28 @@ logger = logging.getLogger(__name__)
 class ZETAPIClient:
     """Client for ZET Partner API integration"""
     
-    def __init__(self, api_key: str, base_url: str = "https://api.zetapp.in"):
+    def __init__(self, api_key: str, base_url: str = "https://integration.staging.onecode.in/v2"):
         self.api_key = api_key
         self.base_url = base_url
         self.token = None
         self.refresh_token = None
         self.token_expiry = None
+        
+        # Try to load stored tokens from environment
+        self._load_stored_tokens()
+    
+    def _load_stored_tokens(self):
+        """Load stored tokens from environment variables"""
+        import os
+        self.token = os.getenv("ZET_ACCESS_TOKEN")
+        self.refresh_token = os.getenv("ZET_REFRESH_TOKEN")
+        self.token_expiry = os.getenv("ZET_TOKEN_EXPIRY")
     
     def generate_token(self, phone_number: str) -> Dict[str, Any]:
         """Generate access token for API calls"""
         try:
             url = f"{self.base_url}/generate-token"
-            headers = {"api_key": self.api_key}
+            headers = {"api-key": self.api_key}
             body = {"id": phone_number}
             
             response = requests.post(url, headers=headers, json=body)
@@ -97,13 +107,40 @@ class ZETAPIClient:
             
             if response.status_code == 200:
                 return {"success": True, "message": "Customer added successfully"}
+            elif response.status_code == 500:
+                # Check if it's a "customer already exists" error
+                try:
+                    error_data = response.json()
+                    error_message = error_data.get("error", {}).get("message", "")
+                    if "already exist" in error_message.lower():
+                        return {"success": True, "message": "Customer already exists in the system"}
+                    else:
+                        return {
+                            "success": False,
+                            "error": error_message,
+                            "code": error_data.get("error", {}).get("code", "500")
+                        }
+                except Exception as json_error:
+                    # If JSON parsing fails, check response text
+                    response_text = response.text
+                    if "already exist" in response_text.lower():
+                        return {"success": True, "message": "Customer already exists in the system"}
+                    else:
+                        return {"success": False, "error": f"Internal server error: {response_text}", "code": "500"}
             else:
-                error_data = response.json()
-                return {
-                    "success": False,
-                    "error": error_data.get("error", {}).get("message", "Customer addition failed"),
-                    "code": error_data.get("error", {}).get("code", "unknown")
-                }
+                try:
+                    error_data = response.json()
+                    return {
+                        "success": False,
+                        "error": error_data.get("error", {}).get("message", "Customer addition failed"),
+                        "code": error_data.get("error", {}).get("code", "unknown")
+                    }
+                except Exception as json_error:
+                    return {
+                        "success": False,
+                        "error": f"API error {response.status_code}: {response.text}",
+                        "code": str(response.status_code)
+                    }
                 
         except Exception as e:
             logger.error(f"Customer addition failed: {str(e)}")

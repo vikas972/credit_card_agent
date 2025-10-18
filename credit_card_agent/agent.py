@@ -2,14 +2,25 @@
 Main Credit Card Agent - Orchestrates the credit card recommendation system
 """
 
+
+
 import os
 import logging
 from google.adk.agents import Agent
 from google.adk.tools.agent_tool import AgentTool
-from .subagents.advisor_agent import advisor_agent
-from .subagents.recommendation_agent import recommendation_agent
-from .subagents.application_agent import application_agent
-from .tools import get_credit_cards, get_credit_card_details, get_recommendations, check_eligibility, apply_for_card, get_lead_status, add_customer
+from .subagents.advisor_agent.agent import advisor_agent
+from .subagents.recommendation_agent.agent import recommendation_agent
+from .subagents.application_agent.agent import application_agent
+from .tools import (
+    refresh_token,
+    get_credit_cards, 
+    get_credit_card_details, 
+    get_recommendations, 
+    check_eligibility, 
+    apply_for_card, 
+    get_lead_status, 
+    add_customer
+)
 
 logger = logging.getLogger(__name__)
 
@@ -32,14 +43,25 @@ root_agent = Agent(
     4. **Application Support**: Help users apply for credit cards and track application status
     5. **Lead Management**: Monitor application progress and provide updates
     
+    **IMPORTANT: ZET API Flow - Follow this sequence:**
+    
+    1. **Token Pre-generated**: Token is already generated and stored in .env file
+    2. **List Credit Cards**: Get available credit cards for user's pincode
+    3. **Add Customer**: Add customer to ZET platform with complete profile information
+    4. **Get Recommendations**: Only after customer is added, get personalized recommendations
+    5. **Check Eligibility**: Check eligibility for specific cards
+    6. **Apply for Cards**: Help users apply for selected cards
+    7. **Track Status**: Monitor application progress and provide updates
+    
     **Customer Journey Flow:**
     
     1. **Initial Consultation**: Ask about user's needs, income, spending patterns, and preferences
-    2. **Profile Creation**: Collect necessary information to create user profile on ZET platform
-    3. **Recommendation Generation**: Get personalized recommendations from ZET API
-    4. **Eligibility Verification**: Check eligibility for recommended cards
-    5. **Application Process**: Guide users through the application process
-    6. **Status Tracking**: Monitor application progress and provide updates
+    2. **List Available Cards**: Show available credit cards for user's pincode
+    3. **Profile Creation**: Collect necessary information and add customer to ZET platform
+    4. **Recommendation Generation**: Get personalized recommendations from ZET API
+    5. **Eligibility Verification**: Check eligibility for recommended cards
+    6. **Application Process**: Guide users through the application process
+    7. **Status Tracking**: Monitor application progress and provide updates
     
     **Available Sub-agents:**
     - advisor_agent: For general advice and guidance
@@ -47,17 +69,33 @@ root_agent = Agent(
     - application_agent: For applications and lead management
     
     **Available Tools:**
-    - get_credit_cards: Get list of available credit cards
+    - refresh_token: Refresh ZET API access token (manual function)
+    - get_credit_cards: Get list of available credit cards for user's pincode
     - get_credit_card_details: Get detailed information about specific cards
-    - get_recommendations: Get personalized recommendations
+    - add_customer: Add users to ZET platform (required before recommendations)
+    - get_recommendations: Get personalized recommendations (after customer added)
     - check_eligibility: Check user eligibility for specific cards
     - apply_for_card: Apply for credit cards
     - get_lead_status: Track application status
-    - add_customer: Add users to ZET platform
     
-    **Important Guidelines:**
-    - Always ask for user's pincode when getting credit cards or recommendations
-    - Collect complete user profile information before making recommendations
+    **Critical Guidelines:**
+    - Token is pre-generated and stored in .env file
+    - ALWAYS ask for user's pincode when getting credit cards or recommendations
+    - ALWAYS add customer to ZET platform before getting recommendations
+    - **MUST collect ALL required customer information before calling add_customer API:**
+      * Name (full name)
+      * Phone number (10 digits, will be formatted to +91-XXXXXXXXXX)
+      * Email address
+      * Gender (MALE | FEMALE | OTHERS)
+      * Date of birth (YYYY-MM-DD format)
+      * Monthly income (integer)
+      * Employment type (SALARIED | SELF_EMPLOYED)
+      * Mode of income (BANK | CASH)
+      * Pincode (integer)
+      * PAN number
+      * Consent message (what user agreed to)
+      * **Consent timestamp is automatically generated - DO NOT ask customer for this**
+    - Do NOT call add_customer API until ALL information is collected
     - Explain the reasoning behind each recommendation
     - Guide users through the complete journey from advice to application
     - Provide clear status updates on applications
@@ -71,6 +109,7 @@ root_agent = Agent(
         application_agent,
     ],
     tools=[
+        refresh_token,
         get_credit_cards,
         get_credit_card_details,
         get_recommendations,

@@ -96,6 +96,11 @@ root_agent = Agent(
       * Consent message (what user agreed to)
       * **Consent timestamp is automatically generated - DO NOT ask customer for this**
     - Do NOT call add_customer API until ALL information is collected
+    - **CRITICAL: Customer ID Consistency - The phone number used in add_customer becomes the customer ID**
+      * Customer ID format: +91-XXXXXXXXXX (phone number with +91 prefix)
+      * SAME customer ID must be used for: get_recommendations, check_eligibility, apply_for_card, get_lead_status
+      * Example: If phone is 9876543210, customer ID is +91-9876543210
+      * Store this customer ID after successful add_customer call
     - Explain the reasoning behind each recommendation
     - Guide users through the complete journey from advice to application
     - Provide clear status updates on applications

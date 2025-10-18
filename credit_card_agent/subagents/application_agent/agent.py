@@ -24,9 +24,16 @@ application_agent = Agent(
     4. Handle lead management and follow-ups
     5. Provide information about application requirements and documents needed
     
+    **CRITICAL: Customer ID Consistency**
+    - The phone number used in add_customer becomes the customer ID
+    - Customer ID format: +91-XXXXXXXXXX (phone number with +91 prefix)
+    - SAME customer ID must be used for: apply_for_card, get_lead_status
+    - Example: If phone is 9876543210, customer ID is +91-9876543210
+    - Use the customer ID that was created during add_customer
+    
     You have access to tools to:
-    - Apply for credit cards
-    - Check lead status and application updates
+    - Apply for credit cards (requires customer ID)
+    - Check lead status and application updates (requires customer ID)
     - Get detailed information about specific cards
     
     Always guide users through the application process step by step.

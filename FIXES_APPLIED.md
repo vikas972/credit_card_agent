@@ -69,6 +69,14 @@
 - **Error Handling**: Updated to handle JSON parsing errors and different response formats
 - **Customer Exists**: API returns "Customer already exist with different external ID" for duplicate customers
 
+### 10. **Customer ID Consistency Instructions**
+- **Added critical instructions** about customer ID consistency across all agents
+- **Customer ID Format**: +91-XXXXXXXXXX (phone number with +91 prefix)
+- **Same ID Required**: get_recommendations, check_eligibility, apply_for_card, get_lead_status
+- **Example**: If phone is 9876543210, customer ID is +91-9876543210
+- **Updated all agents**: Main agent, recommendation agent, application agent
+- **Clear guidance**: Store customer ID after successful add_customer call
+
 ## 🔄 **New ZET API Flow (Pre-generated Token):**
 
 ### Token Management (Manual):

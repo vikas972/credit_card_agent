@@ -5,7 +5,7 @@ Simple tools for credit card operations using ZET API
 
 import os
 import logging
-from typing import Dict, Any, Optional
+from typing import Dict, Any
 from datetime import datetime
 from .zet_api import ZETAPIClient
 
@@ -25,6 +25,9 @@ def get_consent_timestamp() -> str:
 def refresh_token() -> Dict[str, Any]:
     """
     Refresh ZET API access token (manual function)
+    
+    Returns:
+        Dict with success status and new token information
     """
     try:
         if not ZET_CLIENT:
@@ -40,6 +43,11 @@ def refresh_token() -> Dict[str, Any]:
 def get_credit_cards(pincode: int, limit: int = 10, offset: int = 0) -> Dict[str, Any]:
     """
     Get list of available credit cards from ZET API
+    
+    Args:
+        pincode: Pincode to get cards for
+        limit: Maximum number of cards to return (default: 10)
+        offset: Number of cards to skip (default: 0)
     """
     try:
         if not ZET_CLIENT:
@@ -55,6 +63,9 @@ def get_credit_cards(pincode: int, limit: int = 10, offset: int = 0) -> Dict[str
 def get_credit_card_details(product_id: str) -> Dict[str, Any]:
     """
     Get detailed information about a specific credit card
+    
+    Args:
+        product_id: Credit card product ID
     """
     try:
         if not ZET_CLIENT:
@@ -67,15 +78,19 @@ def get_credit_card_details(product_id: str) -> Dict[str, Any]:
         logger.error(f"Get credit card details failed: {str(e)}")
         return {"success": False, "error": str(e)}
 
-def get_recommendations(user_id: str, filter_type: Optional[str] = None) -> Dict[str, Any]:
+def get_recommendations(user_id: str, filter_type: str = "") -> Dict[str, Any]:
     """
     Get personalized credit card recommendations for a user
+    
+    Args:
+        user_id: Customer ID in format +91-XXXXXXXXXX
+        filter_type: Optional filter for recommendations (Dining, Travel, Shopping, etc.)
     """
     try:
         if not ZET_CLIENT:
             return {"success": False, "error": "ZET API not configured"}
         
-        result = ZET_CLIENT.get_recommendations(user_id, filter_type=filter_type)
+        result = ZET_CLIENT.get_recommendations(user_id, filter_type=filter_type if filter_type else None)
         return result
         
     except Exception as e:
@@ -85,36 +100,49 @@ def get_recommendations(user_id: str, filter_type: Optional[str] = None) -> Dict
 def check_eligibility(product_id: str, user_id: str) -> Dict[str, Any]:
     """
     Check if user is eligible for a specific credit card
+    
+    Args:
+        product_id: Credit card product ID
+        user_id: Customer ID in format +91-XXXXXXXXXX
     """
     try:
         if not ZET_CLIENT:
             return {"success": False, "error": "ZET API not configured"}
         
-        result = ZET_CLIENT.get_product_eligibility(product_id, user_id)
+        result = ZET_CLIENT.check_eligibility(product_id, user_id)
         return result
         
     except Exception as e:
         logger.error(f"Check eligibility failed: {str(e)}")
         return {"success": False, "error": str(e)}
 
-def apply_for_card(user_id: str, product_id: str, source: Optional[str] = None) -> Dict[str, Any]:
+def apply_for_card(user_id: str, product_id: str, source: str = "") -> Dict[str, Any]:
     """
     Apply for a credit card and generate a lead
+    
+    Args:
+        user_id: Customer ID in format +91-XXXXXXXXXX
+        product_id: Credit card product ID
+        source: Application source (optional)
     """
     try:
         if not ZET_CLIENT:
             return {"success": False, "error": "ZET API not configured"}
         
-        result = ZET_CLIENT.apply_for_product(user_id, product_id, source)
+        result = ZET_CLIENT.apply_for_product(user_id, product_id, source if source else None)
         return result
         
     except Exception as e:
         logger.error(f"Apply for card failed: {str(e)}")
         return {"success": False, "error": str(e)}
 
-def get_lead_status(user_id: Optional[str] = None, lead_id: Optional[str] = None) -> Dict[str, Any]:
+def get_lead_status(user_id: str = "", lead_id: str = "") -> Dict[str, Any]:
     """
     Get status of credit card applications and leads
+    
+    Args:
+        user_id: Customer ID in format +91-XXXXXXXXXX (optional)
+        lead_id: Specific lead ID to check (optional)
     """
     try:
         if not ZET_CLIENT:
@@ -143,7 +171,7 @@ def add_customer(
     pincode: int,
     pan_no: str,
     consent_message: str = "I agree to the terms and conditions for credit card recommendations",
-    consented_at: Optional[str] = None
+    consented_at: str = ""
 ) -> Dict[str, Any]:
     """
     Add customer to ZET platform for recommendations
@@ -175,7 +203,7 @@ def add_customer(
             formatted_phone = f"+91-{phone_number}"
         
         # Generate consent timestamp if not provided
-        if consented_at is None:
+        if not consented_at:
             consented_at = get_consent_timestamp()
         
         # Prepare customer data according to API specification

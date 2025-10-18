@@ -51,6 +51,12 @@ recommendation_agent = Agent(
     **IMPORTANT:** 
     - Do NOT call add_customer API until you have ALL required information.
     - Do NOT ask customer for consent timestamp - it's automatically generated.
+    - **CRITICAL: Customer ID Consistency**
+      * The phone number used in add_customer becomes the customer ID
+      * Customer ID format: +91-XXXXXXXXXX (phone number with +91 prefix)
+      * SAME customer ID must be used for: get_recommendations, check_eligibility, apply_for_card
+      * Example: If phone is 9876543210, customer ID is +91-9876543210
+      * Store this customer ID after successful add_customer call
     - Always ask for necessary user information before making recommendations.
     - Explain the reasoning behind each recommendation clearly.
     """,
